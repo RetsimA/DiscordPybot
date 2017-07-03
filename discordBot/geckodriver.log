@@ -1,0 +1,87 @@
+1498785384110	geckodriver	INFO	Listening on 127.0.0.1:54958
+1498785386110	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498785388563	Marionette	INFO	Listening on port 54965
+1498785389229	Marionette	WARN	TLS certificate errors will be ignored for this session
+1498785398772	Marionette	INFO	New connections will no longer be accepted
+1498785536207	geckodriver	INFO	Listening on 127.0.0.1:55142
+1498785538198	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498785540669	Marionette	INFO	Listening on port 55148
+1498785541317	Marionette	WARN	TLS certificate errors will be ignored for this session
+1498785545963	Marionette	INFO	New connections will no longer be accepted
+1498786693967	geckodriver	INFO	Listening on 127.0.0.1:55496
+1498786695934	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498786698449	Marionette	INFO	Listening on port 55502
+1498786699052	Marionette	WARN	TLS certificate errors will be ignored for this session
+1498786704748	Marionette	INFO	New connections will no longer be accepted
+1498786763816	geckodriver	INFO	Listening on 127.0.0.1:55597
+1498786765805	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498786768262	Marionette	INFO	Listening on port 55603
+1498786768921	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+1498786774812	Marionette	INFO	New connections will no longer be accepted
+1498786825518	geckodriver	INFO	Listening on 127.0.0.1:55715
+1498786827507	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498786829981	Marionette	INFO	Listening on port 55721
+1498786830625	Marionette	WARN	TLS certificate errors will be ignored for this session
+1498786835293	Marionette	INFO	New connections will no longer be accepted
+1498786897376	geckodriver	INFO	Listening on 127.0.0.1:55815
+1498786899367	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498786901669	Marionette	INFO	Listening on port 55821
+1498786902485	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+JavaScript error: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: SyntaxError: JSON.parse: unexpected character at line 1 column 1 of the JSON data
+JavaScript error: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: TypeError: this[_0xb371[2503]] is undefined
+JavaScript error: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: TypeError: this[_0xb371[2503]] is undefined
+*************************
+A coding exception was thrown and uncaught in a Task.
+
+Full message: TypeError: NetworkError when attempting to fetch resource.
+Full stack: 
+*************************
+JavaScript error: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: TypeError: this[_0xb371[2503]] is undefined
+JavaScript error: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: TypeError: this[_0xb371[2503]] is undefined
+JavaScript error: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: TypeError: this[_0xb371[2503]] is undefined
+JavaScript error: http://static.sfdict.com/app/js/require-37278.js, line 7: Error: Script error
+http://requirejs.org/docs/errors.html#scripterror
+JavaScript error: https://s-static.innovid.com/mobileapps/s/js/vpaid/1hrf63?cb=df36e754-257d-bc6c-cc9e-bbb2220eb3b7&deviceid=&ivc=[ecp], line 265: NS_ERROR_UNEXPECTED: 
+1498789632001	Marionette	INFO	Ceased listening
+1498798321047	geckodriver	INFO	Listening on 127.0.0.1:51003
+1498798323052	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498798325620	Marionette	INFO	Listening on port 51009
+1498798326173	Marionette	WARN	TLS certificate errors will be ignored for this session
+1498798330954	Marionette	INFO	New connections will no longer be accepted
+1498798451612	geckodriver	INFO	Listening on 127.0.0.1:51158
+1498798453653	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498798456233	Marionette	INFO	Listening on port 51165
+1498798456770	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+1498798463481	Marionette	INFO	New connections will no longer be accepted
+1498799523193	geckodriver	INFO	Listening on 127.0.0.1:51703
+1498799525225	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498799528328	Marionette	INFO	Listening on port 51710
+1498799528457	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+1498799536058	Marionette	INFO	New connections will no longer be accepted
+1498863901858	geckodriver	INFO	Listening on 127.0.0.1:53114
+1498863903892	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498863905930	Marionette	INFO	Listening on port 53120
+1498863907016	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+JavaScript warning: https://cdn.cmeden.com/vpaid/vPlayer/player/v5.9.64/OvaMediaPlayer.js, line 1: unreachable code after return statement
+1498863912554	Marionette	INFO	New connections will no longer be accepted
+1498864101563	geckodriver	INFO	Listening on 127.0.0.1:53359
+1498864103567	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498864105686	Marionette	INFO	Listening on port 53366
+1498864106691	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: http://static.sfdict.com/app/js/require-37278.js, line 7: Error: Script error
+http://requirejs.org/docs/errors.html#scripterror
+1498864119324	Marionette	INFO	Ceased listening
+1498865563517	geckodriver	INFO	Listening on 127.0.0.1:54416
+1498865565490	geckodriver::marionette	INFO	Starting browser C:\Program Files (x86)\Mozilla Firefox\firefox.exe with args ["-marionette"]
+1498865568181	Marionette	INFO	Listening on port 54422
+1498865568643	Marionette	WARN	TLS certificate errors will be ignored for this session
+1498865573807	Marionette	INFO	New connections will no longer be accepted
