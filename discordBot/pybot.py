@@ -1,13 +1,9 @@
 import discord,asyncio
 import random
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
 import urllib.request, time, shutil, os
 from bs4 import BeautifulSoup
 import bs4
 import requests
-from lxml import html
 import re
 
 
@@ -88,7 +84,7 @@ async def on_message(message):
                     link= 'https://apod.nasa.gov/apod/ap',inp,'.html'
                     print(''.join(link))
                     soup3 = requests.get(''.join(link))
-                    soup= BeautifulSoup(soup3.content,"lxml")
+                    soup= BeautifulSoup(soup3.content,"html.parser")
                     img= str(soup.findAll('a',{"href":True}))
                     imglink= img.split('src="')[1].split('"/>')[0]
                     imggoto= "https://apod.nasa.gov/apod/",imglink
@@ -131,7 +127,7 @@ async def on_message(message):
             
             await client.delete_message(message)
             req= requests.get('https://dailyverses.net/random-bible-verse')
-            soup= BeautifulSoup(req.content,"lxml")
+            soup= BeautifulSoup(req.content,"html.parser")
 
             verse= str(soup.select('.bibleVerse'))
             verse= verse.split('[<div class="bibleVerse">')[1].split('<div class')[0]
