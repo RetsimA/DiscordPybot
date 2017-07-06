@@ -51,8 +51,10 @@ async def on_message(message):
     #DEFINITION___________
     if msg.startswith("/define"):
         try:
-            await client.delete_message(message)
             inp= msg[8:]
+            await client.delete_message(message)
+            tmp= await client.send_message(ch, "Defining {0}".format(inp))
+            
             link= 'http://www.dictionary.com/browse/',inp
             print(''.join(link))
             soup3 = requests.get(''.join(link))
@@ -68,7 +70,11 @@ async def on_message(message):
 
             word= inp,b
             em= discord.Embed(title= '- '.join(word) , description=a, colour=0xABCDE)
+            
+            await client.delete_message(tmp)
             await client.send_message(ch, embed=em)
+
+            
         except:
             await client.send_message(ch, "No definition of {0}".format(inp))
 
@@ -81,6 +87,10 @@ async def on_message(message):
         else:
             if inp.isdigit():
                 try:
+
+                    date= [inp[i:i+2] for i in range(0, len(inp), 2)]
+                    tmp= await client.send_message(ch, "Loading Astronomy Picture of the Day from {0}.".format(date))
+                    
                     link= 'https://apod.nasa.gov/apod/ap',inp,'.html'
                     print(''.join(link))
                     soup3 = requests.get(''.join(link))
@@ -106,6 +116,7 @@ async def on_message(message):
                     em= discord.Embed(description=do2, colour=0x48437)
                     emImg= discord.Embed.set_image(em,url=imggoto)                    
 
+                    await client.delete_message(tmp)
                     await client.send_message(ch, embed=em)
                     
                 except IndexError:
