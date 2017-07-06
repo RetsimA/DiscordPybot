@@ -56,7 +56,7 @@ async def on_message(message):
             link= 'http://www.dictionary.com/browse/',inp
             print(''.join(link))
             soup3 = requests.get(''.join(link))
-            soup= BeautifulSoup(soup3.content,"lxml")
+            soup= BeautifulSoup(soup3.content,"html.parser")
 
             b= soup.find('span',{'class' : 'dbox-pg'})
             b= ' '.join(b.get_text().split())
