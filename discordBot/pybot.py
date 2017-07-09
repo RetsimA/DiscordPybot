@@ -165,4 +165,4 @@ async def on_message(message):
             em= discord.Embed(title= verse , description="".join(book), colour=0x48437)
             await client.send_message(ch, embed=em)
     
-client.run('MzI4MzExOTgxMTg4ODQxNDgy.DDRtOQ.abeJ3CSJ9k5XoHHxWk6ZkfOjK0U')
+client.run('MzI4MzExOTgxMTg4ODQxNDgy.DERF0w.OXEv3Ee4aIFfVrDKAxxzjevXt88')
