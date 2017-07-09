@@ -25,96 +25,90 @@ async def on_message(message):
 
     if msg.startswith('/sp'):
         await client.delete_message(message)
-        inp= msg[4:]
-        inp= ' '.join(inp)
+        inp= ' '.join(message.content[4:])
         await client.send_message(ch, inp)
         
     if msg.startswith('/img'):
+        imgs= []
+
         try:
-            inp= msg[5:]
-            link= 'https://www.flickr.com/search/?advanced=1&dimension_search_mode=min&height=1920&width=1080&text=',inp
-            print(''.join(link))
+            await client.delete_message(message)
+            tmp= await client.send_message(ch, "Loading image of {0}...".format(msg[5:]))
+            
+            link= 'http://www.bing.com/images/search?q=',msg[5:],'&FORM=RESTAB'
             soup3 = requests.get(''.join(link))
             soup= BeautifulSoup(soup3.content,"html.parser")
 
-            b= str(soup.find('div',{'class' : 'view photo-list-photo-view requiredToShowOnServer awake'}))
-            b= b.split("url(//")[1].split(')">')[0]
-            b='https://',b
-            print(''.join(b))
-            em= discord.Embed(title=inp, colour=0x48437)
-            emImg= discord.Embed.set_image(em,url=''.join(b))
-            await client.send_message(ch, embed=em)
-        except:
+            for a in soup.find_all('a', href=True):
+                if a['href'].startswith("http://"):
+                    if a['href'].endswith(".jpg"):
+                        imgs.append(a['href'])
             
-            await client.send_message(ch, "Try another search input.")
+            em= discord.Embed(title=msg[5:], colour=0x48437)
+            emImg= discord.Embed.set_image(em,url=imgs[random.randint(0,len(imgs))])
+
+            await client.delete_message(tmp)
+            await client.send_message(ch, embed=em)
+        except Exception as errorMsg:
+            print(errorMsg)
+
+            await client.delete_message(tmp)
+            await client.send_message(ch, "An error occured, please try again...")
+        
         
     #DEFINITION___________
     if msg.startswith("/define"):
         try:
             inp= msg[8:]
             await client.delete_message(message)
-            tmp= await client.send_message(ch, "Defining {0}".format(inp))
+            tmp= await client.send_message(ch, "Defining {0}...".format(inp))
             
-            link= 'http://www.dictionary.com/browse/',inp
-            print(''.join(link))
-            soup3 = requests.get(''.join(link))
+            soup3 = requests.get(''.join(('http://www.dictionary.com/browse/',inp)))
             soup= BeautifulSoup(soup3.content,"html.parser")
 
             b= soup.find('span',{'class' : 'dbox-pg'})
-            b= ' '.join(b.get_text().split())
-            b=b.replace('. ', '.\n')
+            b= (' '.join(b.get_text().split())).replace('. ', '.\n')
+
 
             a= soup.find('div',{'class' : 'def-content'})
-            a= ' '.join(a.get_text().split())
-            a=a.replace('. ', '.\n')
+            a= (' '.join(a.get_text().split())).replace('. ', '.\n')
 
-            word= inp,b
-            em= discord.Embed(title= '- '.join(word) , description=a, colour=0xABCDE)
+            em= discord.Embed(title= '- '.join((inp,b)) , description=a, colour=0xABCDE)
             
             await client.delete_message(tmp)
             await client.send_message(ch, embed=em)
 
-            
         except:
-            await client.send_message(ch, "No definition of {0}".format(inp))
+            await client.delete_message(tmp)
+            await client.send_message(ch, "No definition of {0}.".format(inp))
 
     #ASTRONOMY PICTURE OF THE DAY____________       
     if msg.startswith("/apod"):
         inp= msg[6:]
+        
         if len(inp)<6 or len(inp)>6:
             await client.send_message(ch, "Incorrect format; /apod YYMMDD")
             await client.delete_message(message)
+            
         else:
             if inp.isdigit():
                 try:
-
                     date= [inp[i:i+2] for i in range(0, len(inp), 2)]
-                    tmp= await client.send_message(ch, "Loading Astronomy Picture of the Day from {0}.".format(date))
+                    tmp= await client.send_message(ch, "Loading Astronomy Picture of the Day from {0}.".format('/'.join(date)))
                     
-                    link= 'https://apod.nasa.gov/apod/ap',inp,'.html'
-                    print(''.join(link))
-                    soup3 = requests.get(''.join(link))
-                    soup= BeautifulSoup(soup3.content,"html.parser")
-                    img= str(soup.findAll('a',{"href":True}))
-                    imglink= img.split('src="')[1].split('"/>')[0]
-                    imggoto= "https://apod.nasa.gov/apod/",imglink
-                    imggoto= "".join(imggoto)
-                    imggoto= imggoto.replace(" ", "")     
-                    imggoto= imggoto.replace('"style="max-width:100%', "")
-                    
-                    do= soup.find_all('p')
-                    do2= str(do[2])
-                    do2= re.sub('<[^>]+>', '', do2)
-                    do2= do2.split()
-                    do2= " ".join(do2)
-                    do2= do2.replace(". ",".\n\n")
-                    do2= do2.replace("? ",".\n\n")
-                    do2= do2.replace("! ",".\n\n")
-                    do2= do2.replace("Explanation: ","")
+                    link= ''.join(('https://apod.nasa.gov/apod/ap',inp,'.html'))
 
+                    soup3 = requests.get(link)
+                    soup= BeautifulSoup(soup3.content,"html.parser")
                     
-                    em= discord.Embed(description=do2, colour=0x48437)
-                    emImg= discord.Embed.set_image(em,url=imggoto)                    
+                    imgLink= ''.join(('https://apod.nasa.gov/',str((soup.find_all("a", href=True))[1]).split('="')[1].split('">')[0]))
+                    
+                    text= " ".join((re.sub('<[^>]+>', '', str((soup.find_all('p'))[2]))).split())
+                    text= text.split("Tomorrow's picture:")[0].split("digg")[0]
+                    text= text.replace("Explanation: ","").replace(". ",".\n\n").replace("? ","?\n\n").replace("! ","!\n\n")
+
+                    em= discord.Embed(title= '/'.join(date), description=text, colour=0x48437)
+                    emImg= discord.Embed.set_image(em,url=imgLink)                    
 
                     await client.delete_message(tmp)
                     await client.send_message(ch, embed=em)
