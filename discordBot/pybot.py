@@ -23,6 +23,24 @@ async def on_message(message):
     user= message.author.name
     ch= message.channel
 
+    if msg.startswith('/map'):
+        inp= msg[4:]
+        inpNum= inp[0:2]
+        
+        inp= inp[2:]
+        inp=inp.replace(' ','')
+        link= 'https://maps.googleapis.com/maps/api/staticmap?center=',inp,'&zoom=',inpNum.replace(' ',''),'&size=1000x1000&scale=2&maptype=satellite&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
+
+        link= ''.join(link)
+        print(link)
+
+        inp= inp.replace('_',' ')
+        em= discord.Embed(title=' '.join(('Zoom level',inpNum,'of',inp)), colour=0x48437)
+        emImg= discord.Embed.set_image(em,url=link)
+
+        await client.delete_message(message)
+        await client.send_message(ch, embed=em)
+           
     if msg.startswith('/sp'):
         await client.delete_message(message)
         inp= ' '.join(message.content[4:])
