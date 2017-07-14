@@ -22,7 +22,34 @@ async def on_message(message):
     msg= (message.content).lower()
     user= message.author.name
     ch= message.channel
+    if msg.startswith('/help'):
+        helplist="/urb 'word'; Defines a word using Urban Dictionary\n/map'number' 'coordinates or a location'. -Displays a satellite image at the specified \tzoom level at the specified location. ex: /map15 New York City\n/sp 'word(s)'. -splits a word up by each letter\n\
+/img 'word(s)'. -Displays a random image based on your specified word(s)\n/define 'word'. -Defines a word using Dictionary.com\n/verse 'quran' or 'bible'. -Displays a random verse from the specified religious text\n\
+/apod 'YYMMDD'. -Displays the Astronomy Picture of the Day and the associated text of the specified date."
+        em= discord.Embed(title="A list of the available commands",description=helplist, colour=0x48437)
+    
+        await client.send_message(ch, embed=em)
+        
+#Urban Dictionary Search_____________________________________________________________________________________________________________________________________________
+    if msg.startswith('/urb'):
+        inp=msg[5:]
+        await client.delete_message(message)
+        tmp= await client.send_message(ch, "Loading urban definition of {0}...".format(msg[5:]))
+        try:
+            link= 'http://www.urbandictionary.com/define.php?term=','+'.join(inp.split())
+            soup3 = requests.get(''.join(link))
+            soup= BeautifulSoup(soup3.content,"html.parser")
 
+            text= soup.find('div',{'class':'meaning'}).text.replace('&apos;',''),'\n\n',soup.find('div',{'class':'example'}).text.replace('&apos;','')
+            em= discord.Embed(title=msg[5:],description=''.join(text), colour=0x48437)
+
+            await client.delete_message(tmp)
+            await client.send_message(ch, embed=em)
+        except:
+            await client.delete_message(tmp)
+            await client.send_message(ch, '{0} is not a word in the Urban Dictionary.\nTry looking up "Ignoramous"...'.format(inp))
+#Google Image Search___________________________________________________________________________________________________________________________________________________
+            
     if msg.startswith('/map'):
         inp= msg[4:]
         inpNum= inp[0:2]
@@ -40,12 +67,14 @@ async def on_message(message):
 
         await client.delete_message(message)
         await client.send_message(ch, embed=em)
-           
+        
+#S P A C E S_______________________________________________________________________________________________________________________________________________           
     if msg.startswith('/sp'):
         await client.delete_message(message)
         inp= ' '.join(message.content[4:])
         await client.send_message(ch, inp)
         
+#Image Search_______________________________________________________________________________________________________________________________________        
     if msg.startswith('/img'):
         imgs= []
 
@@ -73,8 +102,8 @@ async def on_message(message):
             await client.delete_message(tmp)
             await client.send_message(ch, "An error occured, please try again...")
         
-        
-    #DEFINITION___________
+
+#DEFINITION______________________________________________________________________________________________________________________________________
     if msg.startswith("/define"):
         try:
             inp= msg[8:]
@@ -100,7 +129,7 @@ async def on_message(message):
             await client.delete_message(tmp)
             await client.send_message(ch, "No definition of {0}.".format(inp))
 
-    #ASTRONOMY PICTURE OF THE DAY____________       
+#ASTRONOMY PICTURE OF THE DAY______________________________________________________________________________________________________________________      
     if msg.startswith("/apod"):
         inp= msg[6:]
         
@@ -141,7 +170,7 @@ async def on_message(message):
                 await client.send_message(ch, "Incorrect format; /apod YYMMDD")
                 await client.delete_message(message)
                 
-    #RELIGIOUS TEXT___________________              
+#RELIGIOUS TEXT_____________________________________________________________________________________________________________________________________              
     if msg.startswith("/verse"):
         inp= msg[7:]
 
