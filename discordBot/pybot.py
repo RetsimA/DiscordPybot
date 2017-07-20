@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import bs4
 import requests
 import re
+import io
 from PIL import Image
 
 
@@ -99,10 +100,12 @@ async def on_message(message):
         inp=inp.replace(' ','')
         link= 'https://maps.googleapis.com/maps/api/staticmap?center=',inp,'&zoom=',inpNum.replace(' ',''),'&size=1000x1000&scale=2&maptype=satellite&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
         linkst= 'https://maps.googleapis.com/maps/api/streetview?size=600x300&location=',inp,'&heading=151.78&pitch=-0.76&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
-
         link= ''.join(link)
         linkst= ''.join(linkst)
+
+        images = []
         
+
 
         inp= inp.replace('_',' ')
         em= discord.Embed(title=' '.join(('Zoom level',inpNum,'of',inp)), colour=0x48437)
@@ -110,11 +113,20 @@ async def on_message(message):
         em2= discord.Embed(title='', colour=0x000DA)
         emImg= discord.Embed.set_image(em2,url=linkst)
         
-        
+        for a in range(0,360,33):
+            linkst= 'https://maps.googleapis.com/maps/api/streetview?size=650x650&location=',inp,'&heading=',str(a),'&pitch=0&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
+            linkst= ''.join(linkst)
+            
+            with urllib.request.urlopen(linkst) as url:
+                f = io.BytesIO(url.read())
+            im= Image.open(f)
+            images.append(im)
+
+        im.save('/home/DiscordPybot/discordBot/', save_all=True, append_images=images)
 
         await client.delete_message(message)
         await client.send_message(ch, embed= em)
-        tmp= await client.send_message(ch, embed= em2)
+        await client.send_file(ch, '/image.gif')
 
 
             
