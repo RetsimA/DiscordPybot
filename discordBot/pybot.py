@@ -154,9 +154,9 @@ async def on_message(message):
 
             if flip==True:
                 try:
-                    urllib.request.urlretrieve(imgs[random.randint(0,len(imgs)-1)], "mainImg.jpg")
+                    urllib.request.urlretrieve(imgs[random.randint(0,len(imgs)-1)], "/home/DiscordPybot/discordBot/mainImg.jpg")
 
-                    img= Image.open('/mainImg.jpg')
+                    img= Image.open('/home/DiscordPybot/discordBot/mainImg.jpg')
                     w= img.size[0]
                     h= img.size[1]
                     newim= Image.new('RGB',(w,h))
@@ -173,12 +173,12 @@ async def on_message(message):
                     newim.paste(img3,(0,int(h/2)))
                     newim.paste(img4,(int(w/2),int(h/2)))
 
-                    newim.save("mainImg.jpg")
+                    newim.save("/home/DiscordPybot/discordBot/mainImg.jpg")
                     em= discord.Embed(title="!@#", colour=0x48437)
                     emImg= discord.Embed.set_image(em,url=newim)
 
                     await client.send_message(ch, msg)
-                    await client.send_file(ch, 'mainImg.jpg')
+                    await client.send_file(ch, '/home/DiscordPybot/discordBot/mainImg.jpg')
                     await client.delete_message(tmp)
                     flip= False
                 except Exception as e:
