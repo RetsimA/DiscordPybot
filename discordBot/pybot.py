@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import bs4
 import requests
 import re
+from PIL import Image
 
 
 client= discord.Client()
@@ -22,6 +23,7 @@ async def on_message(message):
     msg= (message.content).lower()
     user= message.author.name
     ch= message.channel
+    
     if msg.startswith('/help'):
         helplist="/urb 'word'; Defines a word using Urban Dictionary\n/map'number' 'coordinates or a location'. -Displays a satellite image at the specified \tzoom level at the specified location. ex: /map15 New York City\n/sp 'word(s)'. -splits a word up by each letter\n\
 /img 'word(s)'. -Displays a random image based on your specified word(s)\n/define 'word'. -Defines a word using Dictionary.com\n/verse 'quran' or 'bible'. -Displays a random verse from the specified religious text\n\
@@ -29,7 +31,44 @@ async def on_message(message):
         em= discord.Embed(title="A list of the available commands",description=helplist, colour=0x48437)
     
         await client.send_message(ch, embed=em)
+#____________________________________________________________________________________________________________________________________________________________________
+
+
+    if msg.startswith('/punch'):
+        await client.delete_message(message)
         
+        em= discord.Embed(title="You need to chill out my dude...", colour=0x48437)
+        emImg= discord.Embed.set_image(em,url='https://cdn.discordapp.com/attachments/288910294661726219/337451209776431106/eYlX8jHWjNGy48nQAAAABJRU5ErkJggg.png')
+        await client.send_message(ch, embed=em)
+        
+#____________________________________________________________________________________________________________________________________________________________________
+        
+    if msg.startswith('/flip'):
+        try:
+            urllib.request.urlretrieve(message.content[6:], "Z:/Py/mainImg.jpg")
+
+            img= Image.open('Z:/Py/mainImg.jpg')
+            w= img.size[0]
+            h= img.size[1]
+
+            img1= img.crop((0,0,w/2,h))
+
+            img2= img1.transpose(Image.FLIP_LEFT_RIGHT)
+
+
+            newim= Image.new('RGB',(w,h))
+            newim.paste(img1,(0,0))
+            newim.paste(img2,(int(w/2),0))
+
+            newim.save("Z:/Py/mainImg.jpg")
+            em= discord.Embed(title="!@#", colour=0x48437)
+            emImg= discord.Embed.set_image(em,url=newim)
+
+            await client.send_file(ch, 'Z:/Py/mainImg.jpg')
+            await client.delete_message(message)
+        except Exception as e:
+            print(e)
+            await client.send_message(ch, 'Sorry an error occurred...')
 #Urban Dictionary Search_____________________________________________________________________________________________________________________________________________
     if msg.startswith('/urb'):
         inp=msg[5:]
@@ -53,20 +92,32 @@ async def on_message(message):
     if msg.startswith('/map'):
         inp= msg[4:]
         inpNum= inp[0:2]
+
         
         inp= inp[2:]
+        
         inp=inp.replace(' ','')
         link= 'https://maps.googleapis.com/maps/api/staticmap?center=',inp,'&zoom=',inpNum.replace(' ',''),'&size=1000x1000&scale=2&maptype=satellite&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
+        linkst= 'https://maps.googleapis.com/maps/api/streetview?size=600x300&location=',inp,'&heading=151.78&pitch=-0.76&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
 
         link= ''.join(link)
-        print(link)
+        linkst= ''.join(linkst)
+        
 
         inp= inp.replace('_',' ')
         em= discord.Embed(title=' '.join(('Zoom level',inpNum,'of',inp)), colour=0x48437)
         emImg= discord.Embed.set_image(em,url=link)
+        em2= discord.Embed(title='', colour=0x000DA)
+        emImg= discord.Embed.set_image(em2,url=linkst)
+        
+        
 
         await client.delete_message(message)
-        await client.send_message(ch, embed=em)
+        await client.send_message(ch, embed= em)
+        tmp= await client.send_message(ch, embed= em2)
+
+
+            
         
 #S P A C E S_______________________________________________________________________________________________________________________________________________           
     if msg.startswith('/sp'):
@@ -76,13 +127,19 @@ async def on_message(message):
         
 #Image Search_______________________________________________________________________________________________________________________________________        
     if msg.startswith('/img'):
+        flip= False
+        if msg[4:].startswith('flip'):
+            flip=True
+            msg= msg[9:]
+        else:
+            msg= msg[5:]
         imgs= []
 
         try:
             await client.delete_message(message)
-            tmp= await client.send_message(ch, "Loading image of {0}...".format(msg[5:]))
+            tmp= await client.send_message(ch, "Loading image of {0}...".format(msg))
             
-            link= 'http://www.bing.com/images/search?q=',msg[5:],'&FORM=RESTAB'
+            link= 'http://www.bing.com/images/search?q=',msg,'&FORM=RESTAB'
             soup3 = requests.get(''.join(link))
             soup= BeautifulSoup(soup3.content,"html.parser")
 
@@ -91,11 +148,46 @@ async def on_message(message):
                     if a['href'].endswith(".jpg"):
                         imgs.append(a['href'])
             
-            em= discord.Embed(title=msg[5:], colour=0x48437)
-            emImg= discord.Embed.set_image(em,url=imgs[random.randint(0,len(imgs))])
+            em= discord.Embed(title=msg, colour=0x48437)
+            
+            emImg= discord.Embed.set_image(em,url=imgs[random.randint(0,len(imgs)-1)])
 
-            await client.delete_message(tmp)
-            await client.send_message(ch, embed=em)
+            if flip==True:
+                try:
+                    urllib.request.urlretrieve(imgs[random.randint(0,len(imgs)-1)], "Z:/Py/mainImg.jpg")
+
+                    img= Image.open('Z:/Py/mainImg.jpg')
+                    w= img.size[0]
+                    h= img.size[1]
+                    newim= Image.new('RGB',(w,h))
+                    img1= img.crop((0,0,w/2,h/2))
+
+                    img2= img1.transpose(Image.FLIP_LEFT_RIGHT)
+                    img3= img1.transpose(Image.FLIP_LEFT_RIGHT).rotate(180)
+                    img4= img1.rotate(-180)
+
+
+                    newim= Image.new('RGB',(w,h))
+                    newim.paste(img1,(0,0))
+                    newim.paste(img2,(int(w/2),0))
+                    newim.paste(img3,(0,int(h/2)))
+                    newim.paste(img4,(int(w/2),int(h/2)))
+
+                    newim.save("Z:/Py/mainImg.jpg")
+                    em= discord.Embed(title="!@#", colour=0x48437)
+                    emImg= discord.Embed.set_image(em,url=newim)
+
+                    await client.send_message(ch, msg)
+                    await client.send_file(ch, 'Z:/Py/mainImg.jpg')
+                    await client.delete_message(tmp)
+                    flip= False
+                except Exception as e:
+                    print(e)
+                    await client.send_message(ch, 'Sorry an error occurred...')
+                    flip= False
+            else:    
+                await client.delete_message(tmp)
+                await client.send_message(ch, embed=em)
         except Exception as errorMsg:
             print(errorMsg)
 
