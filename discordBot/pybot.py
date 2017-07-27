@@ -148,7 +148,7 @@ async def on_message(message):
             im= Image.open(f)
             images.append(im)
             #imageio.mimsave('img.gif', images, duration=10)
-        im.save('\home\ubuntu\DiscordPybot\mapImg.jpg', save_all=True, append_images=images, loop=0, subrectangles=True, duration=500)
+        im.save('/home/ubuntu/DiscordPybot/mapImg.jpg', save_all=True, append_images=images, loop=0, subrectangles=True, duration=500)
         print("done")
         em2= discord.Embed(title='', colour=0x000DA)
         emImg= discord.Embed.set_image(em2,url=linkst)
@@ -208,9 +208,9 @@ async def on_message(message):
 
                 try:
                     r= requests.get(link)
-                    with open('\home\ubuntu\DiscordPybot\mainImg.jpg', 'wb') as outfile:
+                    with open('/home/buntu/iscordPybot/mainImg.jpg', 'wb') as outfile:
                         outfile.write(r.content)
-                        img= Image.open('\home\ubuntu\DiscordPybot\mainImg.jpg')
+                        img= Image.open('/home/buntu/iscordPybot/mainImg.jpg')
                         w= img.size[0]
                         h= img.size[1]
                     
@@ -231,10 +231,10 @@ async def on_message(message):
                 newim.paste(img2,(int(w/2),0))
                 newim.paste(img3,(0,int(h/2)))
                 newim.paste(img4,(int(w/2),int(h/2)))
-                newim.save('\home\ubuntu\DiscordPybot\mainImg.jpg')
-                await client.send_file(ch,'\home\ubuntu\DiscordPybot\mainImg.jpg')
+                newim.save('/home/buntu/iscordPybot/mainImg.jpg')
+                await client.send_file(ch,'/home/buntu/iscordPybot/mainImg.jpg')
                 print(newim.size)
-                os.remove('\home\ubuntu\DiscordPybot\mainImg.jpg')
+                os.remove('/home/buntu/iscordPybot/mainImg.jpg')
                 x=True
                 await client.delete_message(tmp)
             
