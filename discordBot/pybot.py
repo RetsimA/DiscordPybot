@@ -208,9 +208,9 @@ async def on_message(message):
 
                 try:
                     r= requests.get(link)
-                    with open('/home/buntu/iscordPybot/mainImg.jpg', 'wb') as outfile:
+                    with open('/home/ubuntu/DiscordPybot/mainImg.jpg', 'wb') as outfile:
                         outfile.write(r.content)
-                        img= Image.open('/home/buntu/iscordPybot/mainImg.jpg')
+                        img= Image.open('/home/ubuntu/DiscordPybot/mainImg.jpg')
                         w= img.size[0]
                         h= img.size[1]
                     
@@ -231,10 +231,10 @@ async def on_message(message):
                 newim.paste(img2,(int(w/2),0))
                 newim.paste(img3,(0,int(h/2)))
                 newim.paste(img4,(int(w/2),int(h/2)))
-                newim.save('/home/buntu/iscordPybot/mainImg.jpg')
-                await client.send_file(ch,'/home/buntu/iscordPybot/mainImg.jpg')
+                newim.save('/home/ubuntu/DiscordPybot/mainImg.jpg')
+                await client.send_file(ch,'/home/ubuntu/DiscordPybot/mainImg.jpg')
                 print(newim.size)
-                os.remove('/home/buntu/iscordPybot/mainImg.jpg')
+                os.remove('/home/ubuntu/DiscordPybot/mainImg.jpg')
                 x=True
                 await client.delete_message(tmp)
             
