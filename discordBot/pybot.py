@@ -4,11 +4,18 @@ import urllib.request, time, shutil, os
 from bs4 import BeautifulSoup
 import bs4
 import requests
-import re
+import re, io
 from PIL import Image
+import goslate
 
+img=0
+h=0
+w=0
 
-
+def translate(inp):
+    g= goslate.Goslate()
+    inp = str(g.translate(inp,'fr'))
+    return inp
 client= discord.Client()
 @client.event
 async def on_ready():
@@ -24,6 +31,65 @@ async def on_message(message):
     msg= (message.content).lower()
     user= message.author.name
     ch= message.channel
+
+    if msg.startswith('/wiki'):
+        inp=msg[6:]
+        print(inp)
+        link= ''.join(('https://en.wikipedia.org/wiki/Special:Random'))
+        
+        soup3 = requests.get(link)
+        print(soup3.url)
+        soup= BeautifulSoup(soup3.content,"html.parser")
+        words= []
+        link = soup.find_all('p')
+        for a in range(len(link)):
+            words.append(link[a].get_text())
+        s= soup.find('h1',{'id':'firstHeading'}).text
+        d= '\n'.join(words)
+        url= soup3.url
+        
+        em= discord.Embed(title= s ,description=d, colour=0x000DA)
+        fm= discord.Embed.set_footer(em,text= url)
+
+        await client.send_message(ch, embed=em)
+
+        await client.delete_message(message)
+
+#___________________________________________________________________________________________________________________________
+
+    if msg.startswith('/vid'):
+        inp=msg[5:]
+
+        await client.delete_message(message)
+        
+        tmp= await client.send_message(ch, "Loading...".format(msg))
+        
+        link= 'http://www.bing.com/videos/search?q=',inp,'&qs=n&form=QBVLPG&sp=-1&pq=animal&sc=8-5&sk=&cvid=16424F2262AA469C81860655F851BDB5'
+        print(link)
+        soup3 = requests.get(''.join(link))
+        soup= BeautifulSoup(soup3.content,"html.parser")
+        words= []
+
+        for a in soup.find_all('a', href=True):
+            if a['href'].startswith('http') and not(a['href'].startswith('http://go')):
+                
+                words.append(a['href'])
+        print('\n'.join(words))
+
+        link=words[random.randint(0,len(words)-1)]
+        print(link)
+
+
+        await client.delete_message(tmp)
+        await client.send_message(ch, link)
+
+
+
+
+
+
+#_____________________________________________________________________________________________________________________________________
+    
     if msg.startswith('/help'):
         helplist="/urb 'word'; Defines a word using Urban Dictionary\n/map'number' 'coordinates or a location'. -Displays a satellite image at the specified \tzoom level at the specified location. ex: /map15 New York City\n/sp 'word(s)'. -splits a word up by each letter\n\
 /img 'word(s)'. -Displays a random image based on your specified word(s)\n/define 'word'. -Defines a word using Dictionary.com\n/verse 'quran' or 'bible'. -Displays a random verse from the specified religious text\n\
@@ -70,6 +136,20 @@ async def on_message(message):
         inp= inp.replace('_',' ')
         em= discord.Embed(title=' '.join(('Zoom level',inpNum,'of',inp)), colour=0x48437)
         emImg= discord.Embed.set_image(em,url=link)
+
+        images=[]
+
+        for a in range(0,360,36):
+            linkst= 'https://maps.googleapis.com/maps/api/streetview?size=650x650&location=',inp,'&heading=',str(a),'&pitch=0&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
+            linkst= ''.join(linkst)
+            
+            with urllib.request.urlopen(linkst) as url:
+                f = io.BytesIO(url.read())
+            im= Image.open(f)
+            images.append(im)
+            #imageio.mimsave('img.gif', images, duration=10)
+        im.save('/image.gif', save_all=True, append_images=images, loop=0, subrectangles=True, duration=500)
+        print("done")
         em2= discord.Embed(title='', colour=0x000DA)
         emImg= discord.Embed.set_image(em2,url=linkst)
         
@@ -77,8 +157,8 @@ async def on_message(message):
 
         await client.delete_message(message)
         await client.send_message(ch, embed= em)
-        tmp= await client.send_message(ch, embed= em2)
-
+        await client.send_file(ch,'/image.gif')
+        
 
             
         
@@ -96,41 +176,49 @@ async def on_message(message):
         dif=msg[6:]
         
         await client.delete_message(message)
-        tmp= await client.send_message(ch, "Loading image of {0}...".format(msg))
         
-        
+        tmp= await client.send_message(ch, "Loading...".format(msg))
 
         if msg.startswith('/imgf'):
-            print('123')
+            
             link= 'https://www.bing.com/images/search?q=',dif,'&qft=+filterui:photo-animatedgif&FORM=RESTAB'
             soup3 = requests.get(''.join(link))
             soup= BeautifulSoup(soup3.content,"html.parser")
             for a in soup.find_all('a', href=True):
                 if a['href'].startswith("http://") and a['href'].endswith('.gif'):
                     imgs.append(a['href'])
-                    print(a['href'])
+            
             if len(imgs)<1:
                 await client.send_message(ch, 'No gifs were found...')
             
         else:
-            link= 'https://www.bing.com/images/search?q=',msg1,'&qft=+filterui:photo-animatedgif&FORM=RESTAB'
+            link= 'https://www.bing.com/images/search?q=',msg1,'&FORM=RESTAB'
             soup3 = requests.get(''.join(link))
             soup= BeautifulSoup(soup3.content,"html.parser")
             for a in soup.find_all('a', href=True):
                 if a['href'].startswith("http://") and a['href'].endswith('.jpg'):
                     imgs.append(a['href'])
-                    print(a['href'])
-            print(len(imgs))
+
             if len(imgs)<1:
                 await client.send_message(ch, 'No images were found...')
+                
             if msg.startswith('/imgx'):
-                urllib.request.urlretrieve(imgs[random.randint(0,len(imgs)-1)], "Z:\Py\mainImg.jpg")
+                link= imgs[random.randint(0,len(imgs)-1)]
+                print(link)
 
-                img= Image.open('Z:\Py\mainImg.jpg')
-                w= img.size[0]
-                h= img.size[1]
-                print(w)
-
+                try:
+                    r= requests.get(link)
+                    with open('Z:/Py/mainImg.jpg', 'wb') as outfile:
+                        outfile.write(r.content)
+                        img= Image.open('Z:\Py\mainImg.jpg')
+                        w= img.size[0]
+                        h= img.size[1]
+                    
+                except Exception as e:
+                    print(e)
+                    await client.send_message(ch, "An error occured, please try again...")
+                    
+                
                 img1= img.crop((0,0,w/2,h/2))
 
                 img2= img1.transpose(Image.FLIP_LEFT_RIGHT)
@@ -148,11 +236,14 @@ async def on_message(message):
                 print(newim.size)
                 os.remove('Z:\Py\mainImg.jpg')
                 x=True
+                await client.delete_message(tmp)
             
         if not(x):
             try:
+                link=imgs[random.randint(0,len(imgs)-1)]
+                print(link)
                 em= discord.Embed(title=msg1, colour=0x48437)
-                emImg= discord.Embed.set_image(em,url=imgs[random.randint(0,len(imgs)-1)])
+                emImg= discord.Embed.set_image(em,url=link)
 
                 await client.delete_message(tmp)
                 await client.send_message(ch, embed=em)
