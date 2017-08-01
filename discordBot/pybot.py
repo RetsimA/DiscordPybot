@@ -6,16 +6,18 @@ import bs4
 import requests
 import re, io
 from PIL import Image
-import goslate
+from translation import bing
 
 img=0
 h=0
 w=0
-
-def translate(inp):
-    g= goslate.Goslate()
-    inp = str(g.translate(inp,'fr'))
-    return inp
+langs= {}
+f= open('langDictionary.txt','r')
+for a in f:
+    a= a.split()
+    langs[a[0]]=a[1]
+f.close()
+        
 client= discord.Client()
 @client.event
 async def on_ready():
@@ -26,12 +28,18 @@ async def on_ready():
 
 @client.event #THIS LINE AND ASYNC ON THE NEXT LINE ARE REQUIRE FOR FUNCTIONS
 #ANY TIME A USER SENDS A MESSAGE
+
+    
 async def on_message(message):
     
     msg= (message.content).lower()
     user= message.author.name
     ch= message.channel
 
+
+        
+        
+    
     if msg.startswith('/wiki'):
         inp=msg[6:]
         print(inp)
@@ -51,7 +59,7 @@ async def on_message(message):
         em= discord.Embed(title= s ,description=d, colour=0x000DA)
         fm= discord.Embed.set_footer(em,text= url)
 
-        await client.send_message(ch, embed=em)
+        ms= await client.send_message(ch, embed=em)
 
         await client.delete_message(message)
 
@@ -71,7 +79,7 @@ async def on_message(message):
         words= []
 
         for a in soup.find_all('a', href=True):
-            if a['href'].startswith('http') and not(a['href'].startswith('http://go')):
+            if a['href'].startswith('https://www.you'):
                 
                 words.append(a['href'])
         print('\n'.join(words))
@@ -81,10 +89,24 @@ async def on_message(message):
 
 
         await client.delete_message(tmp)
-        await client.send_message(ch, link)
+        await client.send_message(ch,content=('\n'.join((user+": "+inp,link))))
+#________________________________________________________________________________________________________________
 
-
-
+    if msg.startswith('/tr'):
+        inp= msg[3:].split()
+        text= []
+        for a in range(1,len(inp)):
+           text.append(inp[a])
+        
+        print(text)
+        print((inp[0])[0].upper())
+        await client.delete_message(message)
+        try:        
+            translated= bing(' '.join(text),dst=langs[inp[0]])
+            em= discord.Embed(title=' '.join(text),description=translated, colour=0x69420)
+            await client.send_message(ch, embed=em)
+        except Exception as e:
+            print(e)
 
 
 
@@ -142,22 +164,22 @@ async def on_message(message):
         for a in range(0,360,36):
             linkst= 'https://maps.googleapis.com/maps/api/streetview?size=650x650&location=',inp,'&heading=',str(a),'&pitch=0&key=AIzaSyAYf5mIyC5RJxY-u3xiRPsLfjn6niJ9O4o'
             linkst= ''.join(linkst)
-            
+            print(linkst)
             with urllib.request.urlopen(linkst) as url:
                 f = io.BytesIO(url.read())
             im= Image.open(f)
             images.append(im)
             #imageio.mimsave('img.gif', images, duration=10)
-        im.save('/home/ubuntu/DiscordPybot/mapImg.jpg', save_all=True, append_images=images, loop=0, subrectangles=True, duration=500)
+        im.save('mapImg.gif', save_all=True, append_images=images, loop=0, subrectangles=True, duration=500)
         print("done")
         em2= discord.Embed(title='', colour=0x000DA)
-        emImg= discord.Embed.set_image(em2,url=linkst)
+
         
         
 
         await client.delete_message(message)
         await client.send_message(ch, embed= em)
-        await client.send_file(ch,'/image.gif')
+        await client.send_file(ch,'mapImg.gif')
         
 
             
@@ -208,36 +230,38 @@ async def on_message(message):
 
                 try:
                     r= requests.get(link)
-                    with open('/home/ubuntu/DiscordPybot/mainImg.jpg', 'wb') as outfile:
+                    with open('mainImg.jpg', 'wb') as outfile:
                         outfile.write(r.content)
-                        img= Image.open('/home/ubuntu/DiscordPybot/mainImg.jpg')
-                        w= img.size[0]
-                        h= img.size[1]
+                    img= Image.open('mainImg.jpg')
+                    w= img.size[0]
+                    h= img.size[1]
+
+                    img1= img.crop((0,0,w/2,h/2))
+
+                    img2= img1.transpose(Image.FLIP_LEFT_RIGHT)
+                    img3= img1.transpose(Image.FLIP_LEFT_RIGHT).rotate(180)
+                    img4= img1.rotate(-180)
+
+
+                    newim= Image.new('RGB',(w,h))
+                    newim.paste(img1,(0,0))
+                    newim.paste(img2,(int(w/2),0))
+                    newim.paste(img3,(0,int(h/2)))
+                    newim.paste(img4,(int(w/2),int(h/2)))
+                    newim.save('mainImg.jpg')
+                    await client.send_message(ch, ' '.join((user,' creates: ',dif)))                    
+                    await client.send_file(ch,'mainImg.jpg')
+                    print(newim.size)
+                    os.remove('mainImg.jpg')
+                    x=True
+                    await client.delete_message(tmp)
+
+                    
                     
                 except Exception as e:
                     print(e)
                     await client.send_message(ch, "An error occured, please try again...")
-                    
                 
-                img1= img.crop((0,0,w/2,h/2))
-
-                img2= img1.transpose(Image.FLIP_LEFT_RIGHT)
-                img3= img1.transpose(Image.FLIP_LEFT_RIGHT).rotate(180)
-                img4= img1.rotate(-180)
-
-
-                newim= Image.new('RGB',(w,h))
-                newim.paste(img1,(0,0))
-                newim.paste(img2,(int(w/2),0))
-                newim.paste(img3,(0,int(h/2)))
-                newim.paste(img4,(int(w/2),int(h/2)))
-                newim.save('/home/ubuntu/DiscordPybot/mainImg.jpg')
-                await client.send_file(ch,'/home/ubuntu/DiscordPybot/mainImg.jpg')
-                print(newim.size)
-                os.remove('/home/ubuntu/DiscordPybot/mainImg.jpg')
-                x=True
-                await client.delete_message(tmp)
-            
         if not(x):
             try:
                 link=imgs[random.randint(0,len(imgs)-1)]
