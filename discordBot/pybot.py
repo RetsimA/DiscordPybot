@@ -7,6 +7,7 @@ import requests
 import re, io
 from PIL import Image
 from translation import bing
+import nltk
 
 img=0
 h=0
@@ -35,35 +36,141 @@ async def on_message(message):
     msg= (message.content).lower()
     user= message.author.name
     ch= message.channel
+    ############################
+    #START NEW COMMANDS BELOW HERE
 
-
-        
-        
+    #_____________________________________________________________________________________________________________________________________
     
+    if msg.startswith('/help'):
+        helplist="/urb 'word'; Defines a word using Urban Dictionary\n/map'number' 'coordinates or a location'. -Displays a satellite image at the specified \tzoom level at the specified location. ex: /map15 New York City\n/sp 'word(s)'. -splits a word up by each letter\n\
+/img 'word(s)'. -Displays a random image based on your specified word(s)\n/define 'word'. -Defines a word using Dictionary.com\n/verse 'quran' or 'bible'. -Displays a random verse from the specified religious text\n\
+/apod 'YYMMDD'. -Displays the Astronomy Picture of the Day and the associated text of the specified date."
+        em= discord.Embed(title="A list of the available commands",description=helplist, colour=0x48437)
+        await client.send_message(ch, embed=em)
+
+
+#___WEATHER FORECAST !IN PROGRESS!________________________________________________________________________________________________________________________
+    if msg.startswith('/fore'):
+        inp= msg[6:]
+        days=[]
+        forecast=[]
+        combine=[]
+        url= 'http://forecast.weather.gov/MapClick.php?CityName=',inp,'#.WYdo0elOmUm'
+        print(url)
+        soup3 = requests.get(''.join(url))
+        soup= BeautifulSoup(soup3.content,"html.parser")
+
+        for a in soup.find_all('div',{'class':'col-sm-2 forecast-label'}):
+            days.append(a.text)
+        for a in soup.find_all('div',{'class':'col-sm-10 forecast-text'}):
+            forecast.append(a.text)
+        for a in range(0,len(days)):
+            text= ''.join((days[a],': ',forecast[a],'\n\n'))
+            combine.append(text)
+        await client.delete_message(message)
+        em= discord.Embed(title= ' '.join(('Detailed Forecast for',inp)), description=''.join(combine), colour=0x000DA)
+        await client.send_message(ch,embed=em)
+
+
+        
+#____FORTUNE TELLER______________________________________________________________________________________________________________________________________            
+    if msg.startswith('/tell'):
+        fortunes=[]
+        url= 'http://www.fortunecookiemessage.com/archive.php?start=',str(random.randrange(0,800,50))
+        print(url)
+        soup3 = requests.get(''.join(url))
+        soup= BeautifulSoup(soup3.content,"html.parser")
+        for a in soup.find_all('a',href=True):
+            if a['href'].startswith('/cookie'):
+                fortunes.append(a.text)
+        await client.delete_message(message)
+        em= discord.Embed(title=' '.join(('Fortune for',user)), description=fortunes[random.randint(0,len(fortunes))], colour=0x000DA)
+        await client.send_message(ch,embed=em)
+
+
+#_____LANGUAGE PROCESSING !IN PROGRESS!_____________________________________________________________________________________________________________________
+    if msg.startswith('/phil'):
+        url='https://history.hanover.edu/texts/voltaire/volindex.html'
+        soup3 = requests.get(url)
+        soup= BeautifulSoup(soup3.content,"html.parser")
+        d=0
+        phils= []
+        sent= []
+        pos= []
+        words= []
+        posWords= []
+        final= []
+        sentStr= ['DT','NN','VBZ','JJ','.']
+        noPos= ['CD',',','.',';','``',"''",':','(',')']
+        for a in soup.find_all('a',href=True):
+            d+=1
+            if d>2 and d<106:
+                phils.append(''.join(('https://history.hanover.edu',a['href'])))
+
+
+
+        url=phils[random.randint(0,104)]
+        soup3 = requests.get(url)
+        soup= BeautifulSoup(soup3.content,"html.parser")
+
+        a= soup.text.split('2001.')[1].split('Hanover')[0].replace('\n','\n').replace("\'",'').replace(' "','"').replace('" ','"')
+        topic= a.split()[0]
+        tokens= nltk.word_tokenize(a)
+        #print(tokens)
+        tagged= nltk.pos_tag(tokens)
+        #print(tagged)
+
+        for a in range(len(tagged)):
+            sent.append(tagged[a])
+
+        for a in sent:
+            if a[1] not in pos and a[1] not in noPos:
+                pos.append(a[1])
+                words.append(a[0])
+
+        
+        for b in range(len(sentStr)):
+            for a in sent:
+                if a[1]==sentStr[b] and a[0] not in posWords:
+                    posWords.append(a[0])
+            final.append(posWords[random.randint(0,len(posWords)-1)])
+            posWords=[]
+        await client.delete_message(message)
+        print(topic)
+        em= discord.Embed(description=' '.join(final), colour=0x000DA)
+        await client.send_message(ch,embed=em)
+
+
+
+            
+#____WIKI SEARCH___________________________________________________________________________________________________            
     if msg.startswith('/wiki'):
         inp=msg[6:]
         print(inp)
-        link= ''.join(('https://en.wikipedia.org/wiki/Special:Random'))
-        
-        soup3 = requests.get(link)
-        print(soup3.url)
-        soup= BeautifulSoup(soup3.content,"html.parser")
-        words= []
-        link = soup.find_all('p')
-        for a in range(len(link)):
-            words.append(link[a].get_text())
-        s= soup.find('h1',{'id':'firstHeading'}).text
-        d= '\n'.join(words)
-        url= soup3.url
-        
-        em= discord.Embed(title= s ,description=d, colour=0x000DA)
-        fm= discord.Embed.set_footer(em,text= url)
+        link= ''.join(('https://simple.wikipedia.org/wiki/',inp))
+        try:
+            soup3 = requests.get(link)
+            rlink= soup3.url
+            soup3 = requests.get(rlink)
+            soup= BeautifulSoup(soup3.content,"html.parser")
+            words= []
+            link = soup.find_all('p')
+            for a in range(len(link)):
+                words.append(link[a].get_text())
+            s= soup.find('h1',{'id':'firstHeading'}).text
+            d= '\n'.join(words)
+            url= soup3.url
+            
+            em= discord.Embed(title= s ,description=d, colour=0x000DA)
+            fm= discord.Embed.set_footer(em,text= url)
 
-        ms= await client.send_message(ch, embed=em)
+            ms= await client.send_message(ch, embed=em)
 
-        await client.delete_message(message)
+            await client.delete_message(message)
+        except Exception as o:
+            print(o)
 
-#___________________________________________________________________________________________________________________________
+#____BING VIDEO SEARCH_______________________________________________________________________________________________________________________
 
     if msg.startswith('/vid'):
         inp=msg[5:]
@@ -90,7 +197,9 @@ async def on_message(message):
 
         await client.delete_message(tmp)
         await client.send_message(ch,content=('\n'.join((user+": "+inp,link))))
-#________________________________________________________________________________________________________________
+
+
+#____BING TRANSLATION____________________________________________________________________________________________________________
 
     if msg.startswith('/tr'):
         inp= msg[3:].split()
@@ -108,17 +217,6 @@ async def on_message(message):
         except Exception as e:
             print(e)
 
-
-
-#_____________________________________________________________________________________________________________________________________
-    
-    if msg.startswith('/help'):
-        helplist="/urb 'word'; Defines a word using Urban Dictionary\n/map'number' 'coordinates or a location'. -Displays a satellite image at the specified \tzoom level at the specified location. ex: /map15 New York City\n/sp 'word(s)'. -splits a word up by each letter\n\
-/img 'word(s)'. -Displays a random image based on your specified word(s)\n/define 'word'. -Defines a word using Dictionary.com\n/verse 'quran' or 'bible'. -Displays a random verse from the specified religious text\n\
-/apod 'YYMMDD'. -Displays the Astronomy Picture of the Day and the associated text of the specified date."
-        em= discord.Embed(title="A list of the available commands",description=helplist, colour=0x48437)
-    
-        await client.send_message(ch, embed=em)
         
 #Urban Dictionary Search_____________________________________________________________________________________________________________________________________________
     if msg.startswith('/urb'):
@@ -230,9 +328,9 @@ async def on_message(message):
 
                 try:
                     r= requests.get(link)
-                    with open('mainImg.jpg', 'wb') as outfile:
+                    with open('/mainImg.jpg', 'wb') as outfile:
                         outfile.write(r.content)
-                    img= Image.open('mainImg.jpg')
+                    img= Image.open('/mainImg.jpg')
                     w= img.size[0]
                     h= img.size[1]
 
@@ -248,11 +346,11 @@ async def on_message(message):
                     newim.paste(img2,(int(w/2),0))
                     newim.paste(img3,(0,int(h/2)))
                     newim.paste(img4,(int(w/2),int(h/2)))
-                    newim.save('mainImg.jpg')
+                    newim.save('/mainImg.jpg')
                     await client.send_message(ch, ' '.join((user,' creates: ',dif)))                    
-                    await client.send_file(ch,'mainImg.jpg')
+                    await client.send_file(ch,'/mainImg.jpg')
                     print(newim.size)
-                    os.remove('mainImg.jpg')
+                    os.remove('/mainImg.jpg')
                     x=True
                     await client.delete_message(tmp)
 
